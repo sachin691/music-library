@@ -1,22 +1,21 @@
 // src/models/index.js
 
-const sequelize = require("../config/index.js");
+const sequelize = require("../config/index");
 const User = require("./User");
 const Organization = require("./Organization");
+const Artist = require("./Artist");
+const Album = require("./Album");
+const Track = require("./Track");
+const Favorite = require("./Favorite");
+const Playlist = require("./Playlist");
+const UserFollow = require("./UserFollow");
+const RecentlyPlayed = require("./RecentlyPlayed");
 
-// Sync models with the database
-// sequelize
-//   .sync({ force: true }) // `force: true` drops the table if it already exists
-//   .then(() => {
-//     console.log("Database synchronized!");
-//   })
-//   .catch((err) => {
-//     console.error("Error synchronizing the database:", err);
-//   });
+
 
 const syncModels = async () => {
   try {
-    await sequelize.sync({ force: true }); // Use force: false for production
+    await sequelize.sync({ force: true }); 
     console.log("Database synchronized!");
   } catch (err) {
     console.error("Error synchronizing the database:", err);
@@ -25,3 +24,15 @@ const syncModels = async () => {
 
 // Run the sync
 syncModels();
+
+module.exports = {
+  User,
+  Organization,
+  Artist,
+  Album,
+  Track,
+  Favorite,
+  Playlist,
+  UserFollow,
+  RecentlyPlayed,
+};
