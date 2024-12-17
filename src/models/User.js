@@ -6,7 +6,7 @@ const sequelize = require("../config/index"); // Assuming this imports the seque
 const Organization = require("./Organization"); // Import User model
 
 // Enum for role values
-const ROLES = ["Admin", "Editor", "Viewer"];
+const ROLES = ["admin", "editor", "viewer"];
 
 class User extends Model {
   // This method will be called before saving a user to hash the password
@@ -30,7 +30,7 @@ User.init(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,
@@ -47,7 +47,7 @@ User.init(
     role: {
       type: DataTypes.ENUM,
       values: ROLES,
-      defaultValue: "Viewer",
+      defaultValue: "viewer",
       allowNull: false,
     },
     organization_id: {
