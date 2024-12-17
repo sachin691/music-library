@@ -1,3 +1,4 @@
+const { ROLES } = require("../utils/constants")
 const isAdmin = (req, res, next) => {
   try {
     // Ensure the user is authenticated first
@@ -6,7 +7,7 @@ const isAdmin = (req, res, next) => {
     }
 
     // Check if the user's role is Admin
-    if (req.user.role !== "Admin") {
+    if (req.user.role !==  ROLES.ADMIN) {
       return res.status(403).json({ message: "Forbidden: Admin access required" });
     }
 

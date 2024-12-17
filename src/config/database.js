@@ -1,4 +1,3 @@
-// src/config/database.js
 require("dotenv").config();
 
 module.exports = {
@@ -8,7 +7,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     dialect: "postgres",
-    logging: false, // Set to true if you want SQL logs
+    logging: false,
   },
   production: {
     username: process.env.DB_USERNAME,
@@ -20,7 +19,7 @@ module.exports = {
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false, // Needed for SSL in some environments (e.g., Heroku)
+        rejectUnauthorized: false, 
       },
     },
   },

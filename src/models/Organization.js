@@ -25,9 +25,10 @@ Organization.init(
 );
 
 // Define the association from Organization to User
-// Organization.hasMany(User, {
-//   foreignKey: "organization_id", // Linking the organization_id field in User model
-//   as: "users", // Alias for the relationship
-// });
+Organization.hasMany(User, {
+  foreignKey: "organization_id", // Linking the organization_id field in User model
+  as: "users", // Alias for the relationship
+  onDelete: "CASCADE"
+});
 
 module.exports = Organization;

@@ -1,8 +1,8 @@
 // src/models/index.js
 
 const sequelize = require("../config/index");
-const User = require("./User");
 const Organization = require("./Organization");
+const User = require("./User");
 const Artist = require("./Artist");
 const Album = require("./Album");
 const Track = require("./Track");
@@ -15,7 +15,7 @@ const RecentlyPlayed = require("./RecentlyPlayed");
 
 const syncModels = async () => {
   try {
-    await sequelize.sync({ force: true }); 
+    await sequelize.sync({ force: false }); 
     console.log("Database synchronized!");
   } catch (err) {
     console.error("Error synchronizing the database:", err);

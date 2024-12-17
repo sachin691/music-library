@@ -2,7 +2,7 @@
 
 const { Model, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
-const sequelize = require("../config/index"); // Assuming this imports the sequelize instance
+const sequelize = require("../config/index");
 const Organization = require("./Organization"); // Import User model
 
 // Enum for role values
@@ -11,13 +11,31 @@ const ROLES = ["admin", "editor", "viewer"];
 class User extends Model {
   // This method will be called before saving a user to hash the password
   static async hashPassword(password) {
-    const salt = await bcrypt.genSalt(10); // Generate a salt
-    return bcrypt.hash(password, salt); // Hash the password
+    try {
+      // Hash the password asynchronously
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      return hashedPassword; // Return the hashed password
+    } catch (error) {
+      console.log("Error hashing password:", error);
+      throw error;
+    }
   }
 
   // This method will be called to compare the entered password with the hashed one
-  static async comparePassword(plainPassword, hashedPassword) {
-    return bcrypt.compare(plainPassword, hashedPassword);
+  // static async comparePassword(plainPassword, hashedPassword) {
+  //   return bcrypt.compare(plainPassword, hashedPassword);
+  // }
+
+  static async comparePassword(enteredPassword, originalPassword) {
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(enteredPassword, originalPassword, (err, isMatch) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(isMatch);
+      });
+    });
   }
 }
 
@@ -64,7 +82,7 @@ User.init(
     },
     preferences: {
       type: DataTypes.JSONB,
-      allowNull: true, 
+      allowNull: true,
     },
     is_active: {
       type: DataTypes.BOOLEAN,
@@ -80,24 +98,12 @@ User.init(
     },
   },
   {
-    sequelize, 
+    sequelize,
     modelName: "User",
-    tableName: "users", 
-    timestamps: true, 
-    underscored: true, 
-    hooks: {
-      beforeSave: async (user) => {
-        if (user.changed("password")) {
-          user.password = await User.hashPassword(user.password);
-        }
-      },
-    },
+    tableName: "users",
+    timestamps: true,
+    underscored: true,
   }
 );
-
-User.belongsTo(Organization, {
-  foreignKey: "organization_id", // This will link the user to an organization
-  as: "organization", // Alias for the relationship
-});
 
 module.exports = User;

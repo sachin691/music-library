@@ -1,19 +1,29 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const passport = require("passport");
+const { STATUS_CODES } = require("../utils/constants"); // Assuming STATUS_CODES is defined in constants.js
 
 const authenticate = (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized: Token not provided" });
+  passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    if (err) {
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({
+        status: STATUS_CODES.UNAUTHORIZED,
+        data: null,
+        message: "Unauthorized: Invalid or expired token",
+        error: null,
+      });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify the token
-    req.user = decoded; // Add user data to the request
+    if (!user) {
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({
+        status: STATUS_CODES.UNAUTHORIZED,
+        data: null,
+        message: "Unauthorized: User not found",
+        error: null,
+      });
+    }
+
+    req.user = user;
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
-  }
+  })(req, res, next); // Execute the passport authentication
 };
 
 module.exports = authenticate;
