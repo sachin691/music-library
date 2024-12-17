@@ -110,8 +110,8 @@ const login = async (req, res) => {
       });
     }
 
-    const isMatch = User.comparePassword(password, user.password);
-
+    const isMatch = await User.comparePassword(password, user.password);
+    console.log(isMatch)
     if (!isMatch) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,

@@ -180,8 +180,71 @@ const deleteUser = async (req, res) => {
   }
 };
 
+
+const updatePassword = async (req, res) => {
+  try {
+    const { old_password, new_password } = req.body;
+    const user = req.user; // Assuming user info is attached to the request after JWT authentication
+    console.log('user', user.password);
+    if (!old_password || !new_password) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        status: STATUS_CODES.BAD_REQUEST,
+        data: null,
+        message: "Old password and new password are required.",
+        error: null,
+      });
+    }
+
+    // Find user in the database
+    // const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) {
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        status: STATUS_CODES.NOT_FOUND,
+        data: null,
+        message: "User not found.",
+        error: null,
+      });
+    }
+
+    // Check if the old password matches the current password
+    const isPasswordValid = await User.comparePassword(old_password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(STATUS_CODES.FORBIDDEN).json({
+        status: STATUS_CODES.FORBIDDEN,
+        data: null,
+        message: "Old password is incorrect.",
+        error: null,
+      });
+    }
+
+    // Hash the new password and update it
+    const hashedNewPassword = await User.hashPassword(new_password);
+
+    // Update the password in the database
+    await User.update({ password: hashedNewPassword }, { where: { id: user.id } });
+
+    return res.status(STATUS_CODES.NO_CONTENT).json({
+      status: STATUS_CODES.NO_CONTENT,
+      data: null,
+      message: "Password updated successfully.",
+      error: null,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+      data: null,
+      message: "Internal Server Error",
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   addUser,
-  deleteUser
+  deleteUser,
+  updatePassword
 };
