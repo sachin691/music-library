@@ -1,5 +1,5 @@
 const { Album, Artist } = require("../models"); // Import the models
-const STATUS_CODES = require("../constants/statusCodes"); // Import the status codes
+const { STATUS_CODES } = require("../utils/constants"); // Import the status codes
 
 const getAllAlbums = async (req, res) => {
   try {
