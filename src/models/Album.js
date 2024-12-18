@@ -1,8 +1,8 @@
 // src/models/Album.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
-const Artist = require("./Artist"); // Import Artist model
-const Organization = require("./Organization"); // Import Organization model (if required)
+const Artist = require("./Artist");
+const Organization = require("./Organization");
 
 class Album extends Model {}
 
@@ -20,7 +20,7 @@ Album.init(
     artist_id: {
       type: DataTypes.UUID,
       references: {
-        model: "artists", // The `artists` table reference
+        model: "artists",
         key: "id",
       },
       allowNull: false, // An album must have an associated artist
@@ -30,7 +30,7 @@ Album.init(
       allowNull: false,
     },
     genre: {
-      type: DataTypes.STRING, // Genre as a string, can be an enum if needed
+      type: DataTypes.STRING,
       allowNull: true,
     },
     cover_image: {
@@ -40,14 +40,23 @@ Album.init(
     organization_id: {
       type: DataTypes.UUID,
       references: {
-        model: "organizations", // The `organizations` table reference
+        model: "organizations",
         key: "id",
       },
       allowNull: true,
     },
     tags: {
-      type: DataTypes.JSONB, // JSONB for storing tags like "Greatest Hits", "Live"
+      type: DataTypes.JSONB,
       allowNull: true,
+    },
+    year: {
+      type: DataTypes.INTEGER,
+      allowNull: true, // Optional
+    },
+    hidden: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // Default to not hidden
+      allowNull: false,
     },
     created_at: {
       type: DataTypes.DATE,
@@ -67,15 +76,17 @@ Album.init(
   }
 );
 
-// Define associations
+// Define associations with onDelete: 'CASCADE'
 Album.belongsTo(Artist, {
-  foreignKey: "artist_id", // The artist reference in the album model
-  as: "artist", // Alias for the relationship
+  foreignKey: "artist_id",
+  as: "artist",
+  onDelete: "CASCADE", // Ensuring the album is deleted when artist is deleted
 });
 
 Album.belongsTo(Organization, {
-  foreignKey: "organization_id", // The organization reference in the album model
-  as: "organization", // Alias for the relationship
+  foreignKey: "organization_id",
+  as: "organization",
+  onDelete: "CASCADE", // Ensuring the album is deleted when organization is deleted
 });
 
 module.exports = Album;

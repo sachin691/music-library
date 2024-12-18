@@ -1,6 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
-const User = require("./User"); // Import User model
+const User  = require("./User"); // Import User model
+const Artist = require("./Artist");
 
 class Organization extends Model {}
 
@@ -28,6 +29,13 @@ Organization.init(
 Organization.hasMany(User, {
   foreignKey: "organization_id", // Linking the organization_id field in User model
   as: "users", // Alias for the relationship
+  onDelete: "CASCADE",
+});
+
+
+Organization.hasMany(Artist, {
+  foreignKey: "organization_id", // Reference in the artist model
+  as: "artists", // Alias for the relationship
   onDelete: "CASCADE"
 });
 

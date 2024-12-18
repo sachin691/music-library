@@ -1,6 +1,8 @@
 const { User } = require("../models"); // Assuming you're using Sequelize or similar ORM
 const { STATUS_CODES } = require("../utils/constants");
 const { Op } = require("sequelize");
+const { ROLES } = require("../utils/constants");
+
 
 // Function to retrieve all users
 const getUsers = async (req, res) => {
@@ -86,7 +88,7 @@ const addUser = async (req, res) => {
     }
 
     // Validate role (can only be 'editor' or 'viewer')
-    if (role === "admin") {
+    if (role === ROLES.ADMIN) {
       return res.status(STATUS_CODES.FORBIDDEN).json({
         status: STATUS_CODES.FORBIDDEN,
         data: null,
@@ -95,7 +97,7 @@ const addUser = async (req, res) => {
       });
     }
 
-    if (!["editor", "viewer"].includes(role)) {
+    if (![ROLES.EDITOR, ROLES.VIEWER].includes(role)) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,
         data: null,
@@ -180,12 +182,11 @@ const deleteUser = async (req, res) => {
   }
 };
 
-
 const updatePassword = async (req, res) => {
   try {
     const { old_password, new_password } = req.body;
     const user = req.user; // Assuming user info is attached to the request after JWT authentication
-    console.log('user', user.password);
+
     if (!old_password || !new_password) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,
@@ -246,5 +247,5 @@ module.exports = {
   getUsers,
   addUser,
   deleteUser,
-  updatePassword
+  updatePassword,
 };

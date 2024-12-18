@@ -3,10 +3,10 @@
 const { Model, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
 const sequelize = require("../config/index");
-const Organization = require("./Organization"); // Import User model
+const { ROLES } = require("../utils/constants");
 
 // Enum for role values
-const ROLES = ["admin", "editor", "viewer"];
+const ROLES_ENUM = [ROLES.ADMIN, ROLES.EDITOR, ROLES.VIEWER];
 
 class User extends Model {
   // This method will be called before saving a user to hash the password
@@ -64,7 +64,7 @@ User.init(
     },
     role: {
       type: DataTypes.ENUM,
-      values: ROLES,
+      values: ROLES_ENUM,
       defaultValue: "viewer",
       allowNull: false,
     },

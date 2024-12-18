@@ -31,8 +31,8 @@ const baseUrl = process.env.BASE_URL;
 
 // Combine both routes into one line
 app.use(baseUrl, [authRoutes, userRoutes]);
-// app.use(process.env.BASE_URL + "/artists", artistRoutes);
-// app.use(process.env.BASE_URL + "/albums", albumRoutes);
+app.use(process.env.BASE_URL + "/artists", artistRoutes);
+app.use(process.env.BASE_URL + "/albums", albumRoutes);
 // app.use(process.env.BASE_URL + "/tracks", trackRoutes);
 
 // Centralized error handler (for any unhandled routes or errors)

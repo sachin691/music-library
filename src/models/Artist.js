@@ -1,7 +1,6 @@
 // src/models/Artist.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
-const Organization = require("./Organization"); // Import the Organization model if needed
 
 class Artist extends Model {}
 
@@ -27,10 +26,6 @@ Artist.init(
     },
     organization_id: {
       type: DataTypes.UUID,
-      references: {
-        model: "organizations", // References the `organizations` table
-        key: "id",
-      },
       allowNull: true, // Organization is optional
     },
     profile_picture: {
@@ -40,6 +35,16 @@ Artist.init(
     tags: {
       type: DataTypes.JSONB,
       allowNull: true,
+    },
+    hidden: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
+    grammy: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
     },
     created_at: {
       type: DataTypes.DATE,
@@ -58,11 +63,5 @@ Artist.init(
     underscored: true,
   }
 );
-
-// Define the relationship between Artist and Organization
-Artist.belongsTo(Organization, {
-  foreignKey: "organization_id", // Organization reference in the artist model
-  as: "organization", // Alias for the relationship
-});
 
 module.exports = Artist;

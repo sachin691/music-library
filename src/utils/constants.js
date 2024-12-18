@@ -3,8 +3,10 @@
 // Roles
 const ROLES = {
   ADMIN: "admin",
-  USER: "user",
-  ARTIST: "artist",
+  EDITOR: "editor",
+  // USER: "user",
+  // ARTIST: "artist",
+  VIEWER: "viewer"
 };
 
 // Status Codes
