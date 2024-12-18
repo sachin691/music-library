@@ -25,10 +25,6 @@ Album.init(
       },
       allowNull: false, // An album must have an associated artist
     },
-    release_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
     genre: {
       type: DataTypes.STRING,
       allowNull: true,

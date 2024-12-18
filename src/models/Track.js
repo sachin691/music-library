@@ -67,6 +67,11 @@ Track.init(
       },
       allowNull: false,
     },
+    hidden: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // Default to not hidden
+      allowNull: false,
+    },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

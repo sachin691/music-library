@@ -4,9 +4,9 @@ const { getUsers, addUser, deleteUser, updatePassword } = require("../controller
 const isAdmin = require("../middlewares/isAdmin");
 const authenticate = require("../middlewares/isAuthenticated");
 // Define the route for retrieving users
-router.get("/users", authenticate, isAdmin, getUsers);
+router.get("/", authenticate, isAdmin, getUsers);
 router.post("/add-user", authenticate, isAdmin, addUser);
-router.delete("/users/:id", authenticate, isAdmin, deleteUser);
-router.put("/users/update-password", authenticate, updatePassword);
+router.delete("/:id", authenticate, isAdmin, deleteUser);
+router.put("/update-password", authenticate, updatePassword);
 
 module.exports = router;
