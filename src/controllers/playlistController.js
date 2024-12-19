@@ -2,7 +2,7 @@
 
 const Playlist = require("../models/Playlist");
 const Track = require("../models/Track");
-const {STATUS_CODES} = require("../utils/constants"); // Assuming you have this for status codes
+const { STATUS_CODES } = require("../utils/constants"); // Assuming you have this for status codes
 
 // Create a new playlist
 const createPlaylist = async (req, res) => {
@@ -10,11 +10,11 @@ const createPlaylist = async (req, res) => {
     const { title, description, is_public, tags } = req.body;
     const user_id = req.user.id; // Assuming user_id is coming from the authentication middleware
 
-    if (!title || !is_public) {
+    if (!title || is_public === undefined) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
         data: null,
-        message: "Resource Doesn't Exist",
+        message: "Resource Doesn't Exist: Title is required",
         error: null,
       });
     }
@@ -60,7 +60,7 @@ const addTrackToPlaylist = async (req, res) => {
       });
     }
 
-    console.log('going....')
+    console.log("going....");
 
     // Use the static method from the Playlist model to add track to the playlist
     const response = await Playlist.addTrackToPlaylist(playlist_id, track_id, user_id);
@@ -116,7 +116,6 @@ const removeTrackFromPlaylist = async (req, res) => {
   }
 };
 
-
 // Get all tracks in a playlist
 const getTracksInPlaylist = async (req, res) => {
   try {
@@ -152,7 +151,7 @@ const getTracksInPlaylist = async (req, res) => {
 
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
-      data: tracks,
+      data: { tracks },
       message: "Tracks retrieved successfully.",
       error: null,
     });

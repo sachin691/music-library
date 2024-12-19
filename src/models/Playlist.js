@@ -91,11 +91,12 @@ class Playlist extends Model {
     // Assuming PlaylistTrack is a join table between Playlists and Tracks
     return await PlaylistTrack.findAll({
       where: { playlist_id },
-      include: [
+      include:
+      [
         {
           model: Track, // Assuming Track is another model in your database
           as: "tracks", // Make sure to define associations between Playlist and Track
-          attributes: ["id", "name", "artist_id", "duration"], // Select track details
+          attributes: ["id", "title", "artist_id", "duration"], // Select track details
         },
       ],
       order: [["order", "ASC"]], // Optionally order tracks based on the 'order' field
@@ -103,20 +104,7 @@ class Playlist extends Model {
   }
 
   // Static method to define associations
-  static associate(models) {
-    // Playlist belongs to User (one-to-many)
-    Playlist.belongsTo(models.User, {
-      foreignKey: "user_id",
-      as: "user",
-    });
 
-    // Playlist belongs to many Tracks (many-to-many via PlaylistTrack)
-    Playlist.belongsToMany(models.Track, {
-      through: "playlist_tracks",
-      foreignKey: "playlist_id",
-      as: "tracks",
-    });
-  }
 }
 
 Playlist.init(

@@ -38,34 +38,7 @@ class User extends Model {
     });
   }
 
-  // Associations will be defined here
-  static associate(models) {
-    // A user can have many playlists
-    User.hasMany(models.Playlist, {
-      foreignKey: "user_id",
-      as: "playlists",
-      onDelete: "CASCADE",
-    });
 
-    // A user can belong to an organization
-    User.belongsTo(models.Organization, {
-      foreignKey: "organization_id",
-      as: "organization",
-    });
-
-    // A user can have many favorites
-    User.hasMany(models.Favorite, {
-      foreignKey: "user_id",
-      as: "favorites",
-    });
-
-    // A user can follow many artists
-    User.belongsToMany(models.Artist, {
-      through: "user_artists",
-      foreignKey: "user_id",
-      as: "followed_artists",
-    });
-  }
 }
 
 User.init(

@@ -7,19 +7,7 @@ const Artist = require("./Artist");
 
 class UserFollow extends Model {
   // Associations will be defined here
-  static associate(models) {
-    // UserFollow belongs to User
-    UserFollow.belongsTo(models.User, {
-      foreignKey: "user_id",
-      as: "user",
-    });
 
-    // UserFollow belongs to Artist
-    UserFollow.belongsTo(models.Artist, {
-      foreignKey: "artist_id",
-      as: "artist",
-    });
-  }
 }
 
 UserFollow.init(

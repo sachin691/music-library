@@ -7,29 +7,7 @@ class Track extends Model {
     // Track belongs to Artist (one-to-many)
     console.log("Associating Track with PlaylistTrack and others...");
 
-    Track.belongsTo(models.Artist, {
-      foreignKey: "artist_id",
-      as: "artist",
-    });
-
-    // Track belongs to Album (many-to-one)
-    Track.belongsTo(models.Album, {
-      foreignKey: "album_id",
-      as: "album",
-    });
-
-    // Track belongs to Organization (many-to-one)
-    Track.belongsTo(models.Organization, {
-      foreignKey: "organization_id",
-      as: "organization",
-    });
-
-    // Track belongs to many Playlists (many-to-many via playlist_tracks)
-    Track.belongsToMany(models.Playlist, {
-      through: "playlist_tracks",
-      foreignKey: "track_id",
-      as: "playlists",
-    });
+    
   }
 }
 

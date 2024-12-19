@@ -30,14 +30,7 @@
 //       type: DataTypes.INTEGER,
 //       allowNull: false,
 //     },
-//     created_at: {
-//       type: DataTypes.DATE,
-//       defaultValue: DataTypes.NOW,
-//     },
-//     updated_at: {
-//       type: DataTypes.DATE,
-//       defaultValue: DataTypes.NOW,
-//     },
+
 //   },
 //   {
 //     sequelize,
@@ -60,18 +53,7 @@ const Track = require("./Track");
 
 
 class PlaylistTrack extends Model {
-  static associate(models) {
-    // Define associations here
-    PlaylistTrack.belongsTo(Track, {
-      foreignKey: "track_id", // Track reference
-      as: "track", // Alias for the track association
-    });
 
-    PlaylistTrack.belongsTo(Playlist, {
-      foreignKey: "playlist_id", // Playlist reference
-      as: "playlist", // Alias for the playlist association
-    });
-  }
 }
 
 PlaylistTrack.init(
@@ -101,12 +83,20 @@ PlaylistTrack.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
     sequelize,
     modelName: "PlaylistTrack",
     tableName: "playlist_tracks",
-    timestamps: false,  // No need for timestamps
+    timestamps: false, // No need for timestamps
     underscored: true,
   }
 );

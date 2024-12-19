@@ -36,31 +36,7 @@ class Artist extends Model {
   }
 
   // Define associations in the static method
-  static associate(models) {
-    Artist.belongsTo(models.Organization, {
-      foreignKey: "organization_id",
-      as: "organization", // Alias for the relationship
-      onDelete: "CASCADE",
-    });
 
-    Artist.hasMany(models.Album, {
-      foreignKey: "artist_id",
-      as: "albums", // Alias for the relationship
-      onDelete: "CASCADE",
-    });
-
-    Artist.hasMany(models.Track, {
-      foreignKey: "artist_id",
-      as: "tracks", // Alias for the relationship
-      onDelete: "CASCADE",
-    });
-
-    Artist.belongsToMany(models.User, {
-      through: models.UserFollow,
-      foreignKey: "artist_id",
-      as: "followers", // Alias for the relationship (many-to-many through UserFollow)
-    });
-  }
 }
 
 Artist.init(
