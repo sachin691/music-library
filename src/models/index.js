@@ -11,21 +11,22 @@ const Playlist = require("./Playlist");
 const UserFollow = require("./UserFollow");
 const Track = require("./Track");
 const PlaylistTrack = require("./PlaylistTrack"); // Import PlaylistTrack model
+const Album = require("./Album");
 
 // Initialize models
-User.init({}, {sequelize});
-Organization.init(sequelize);
-Artist.init(sequelize);
-Favorite.init(sequelize);
-Playlist.init(sequelize);
-UserFollow.init(sequelize);
-Track.init(sequelize);
-PlaylistTrack.init(sequelize); // Initialize PlaylistTrack model
+// User.init({}, {sequelize});
+// Organization.init(sequelize);
+// Artist.init(sequelize);
+// Favorite.init(sequelize);
+// Playlist.init(sequelize);
+// UserFollow.init(sequelize);
+// Track.init(sequelize);
+// PlaylistTrack.init(sequelize); // Initialize PlaylistTrack model
 
 // Set up associations after initializing models
 User.associate({ Organization, Playlist, Favorite, Artist, UserFollow });
 Organization.associate({ User, Artist });
-Artist.associate({ User, UserFollow });
+Artist.associate({ Organization, Album, Track, User, UserFollow });
 Favorite.associate({ User });
 Playlist.associate({ User });
 UserFollow.associate({ User, Artist });

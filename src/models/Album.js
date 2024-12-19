@@ -2,6 +2,7 @@
 const { Model, DataTypes } = require("sequelize");
 const Artist = require("./Artist");
 const Organization = require("./Organization");
+const sequelize = require("../config/index");
 
 class Album extends Model {
   static associate(models) {
