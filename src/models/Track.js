@@ -1,10 +1,6 @@
-// src/models/Track.js
-
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
-const Artist = require("./Artist");
-const Album = require("./Album");
-const Organization = require("./Organization");
+const Playlist = require("./Playlist");
 
 class Track extends Model {}
 
@@ -39,6 +35,14 @@ Track.init(
       },
       allowNull: false,
     },
+    organization_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: "organizations", // Assuming you have an 'organizations' table
+        key: "id",
+      },
+      allowNull: false, // or false depending on your requirement
+    },
     play_count: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -59,17 +63,9 @@ Track.init(
       type: DataTypes.JSONB,
       allowNull: true,
     },
-    organization_id: {
-      type: DataTypes.UUID,
-      references: {
-        model: "organizations",
-        key: "id",
-      },
-      allowNull: false,
-    },
     hidden: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false, // Default to not hidden
+      defaultValue: false,
       allowNull: false,
     },
     created_at: {
@@ -90,20 +86,7 @@ Track.init(
   }
 );
 
-// Define associations
-Track.belongsTo(Artist, {
-  foreignKey: "artist_id",
-  as: "artist",
-});
-
-Track.belongsTo(Album, {
-  foreignKey: "album_id",
-  as: "album",
-});
-
-Track.belongsTo(Organization, {
-  foreignKey: "organization_id",
-  as: "organization",
-});
+// Define relationships
+Track.belongsToMany(Playlist, { through: "playlist_tracks", foreignKey: "track_id", as: "playlists" });
 
 module.exports = Track;

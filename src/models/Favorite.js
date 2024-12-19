@@ -28,7 +28,7 @@ Favorite.init(
       type: DataTypes.ENUM("Artist", "Album", "Track"),
       allowNull: false,
     },
-    favorite_id: {
+    item_id: {
       type: DataTypes.UUID,
       allowNull: false,
     },
@@ -62,19 +62,19 @@ Favorite.belongsTo(User, {
 
 // Polymorphic association: Favorite can belong to Artist, Album, or Track
 Favorite.belongsTo(Artist, {
-  foreignKey: "favorite_id",
+  foreignKey: "item_id",
   constraints: false, // Disable constraints for polymorphic relationship
   as: "artist",
 });
 
 Favorite.belongsTo(Album, {
-  foreignKey: "favorite_id",
+  foreignKey: "item_id",
   constraints: false, // Disable constraints for polymorphic relationship
   as: "album",
 });
 
 Favorite.belongsTo(Track, {
-  foreignKey: "favorite_id",
+  foreignKey: "item_id",
   constraints: false, // Disable constraints for polymorphic relationship
   as: "track",
 });

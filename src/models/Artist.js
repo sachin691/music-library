@@ -2,7 +2,37 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
 
-class Artist extends Model {}
+class Artist extends Model {
+  static async incrementFollowers(artist_id) {
+    try {
+      const artist = await Artist.findByPk(artist_id); // Find artist by ID
+      if (!artist) {
+        throw new Error("Artist not found.");
+      }
+      artist.followers_count += 1; // Increment the count
+      await artist.save(); // Save the changes
+    } catch (error) {
+      console.error("Error incrementing followers count:", error.message);
+      throw error; // Re-throw the error for handling in the controller
+    }
+  }
+
+  static async decrementFollowers(artist_id) {
+    try {
+      const artist = await Artist.findByPk(artist_id); // Find artist by ID
+      if (!artist) {
+        throw new Error("Artist not found.");
+      }
+      if (artist.followers_count > 0) {
+        artist.followers_count -= 1; // Decrement the count (only if > 0)
+        await artist.save(); // Save the changes
+      }
+    } catch (error) {
+      console.error("Error decrementing followers count:", error.message);
+      throw error; // Re-throw the error for handling in the controller
+    }
+  }
+}
 
 Artist.init(
   {

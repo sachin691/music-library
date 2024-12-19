@@ -1,6 +1,5 @@
 const { Track, Artist, Album } = require("../models"); // Import models
-const STATUS_CODES = require("../constants/statusCodes");
-const ROLES = require("../utils/constants");
+const { ROLES, STATUS_CODES } = require("../utils/constants");
 
 const getAllTracks = async (req, res) => {
   try {
@@ -143,18 +142,27 @@ const getTrackById = async (req, res) => {
 
 const addTrack = async (req, res) => {
   try {
-    const { artist_id, album_id, name, duration, hidden } = req.body; // Extract fields from request body
+    const { artist_id, album_id, name, duration, hidden, audio_url } = req.body; // Extract fields from request body
     const { user } = req; // Get logged-in user from the middleware (authenticate)
 
-    // Check if the logged-in user is admin or editor
-    if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
-      return res.status(STATUS_CODES.FORBIDDEN).json({
-        status: STATUS_CODES.FORBIDDEN,
+    if (!artist_id || !album_id || !name || !duration || !audio_url) {
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        status: STATUS_CODES.NOT_FOUND,
         data: null,
-        message: "Forbidden: You do not have permission to add a new track.",
+        message: "Resource Doesn't Exist",
         error: null,
       });
     }
+
+    // Check if the logged-in user is admin or editor
+    // if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
+    //   return res.status(STATUS_CODES.FORBIDDEN).json({
+    //     status: STATUS_CODES.FORBIDDEN,
+    //     data: null,
+    //     message: "Forbidden: You do not have permission to add a new track.",
+    //     error: null,
+    //   });
+    // }
 
     // Ensure the artist exists
     const artist = await Artist.findOne({ where: { id: artist_id } });
@@ -179,12 +187,15 @@ const addTrack = async (req, res) => {
     }
 
     // Create the new track
+    console.log("user.organization_id ==> ", user.organization_id);
     const newTrack = await Track.create({
       artist_id,
       album_id,
       title: name,
       duration,
       hidden: hidden || false, // Default to false if not provided
+      audio_url,
+      organization_id: user.organization_id
     });
 
     return res.status(STATUS_CODES.CREATED).json({
@@ -205,8 +216,60 @@ const addTrack = async (req, res) => {
 };
 
 
+const deleteTrack = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract track ID from the route parameter
+    const { user } = req; // Get logged-in user from the middleware (authenticate)
+
+    // Check if the logged-in user is admin or editor
+    if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
+      return res.status(STATUS_CODES.FORBIDDEN).json({
+        status: STATUS_CODES.FORBIDDEN,
+        data: null,
+        message: "Forbidden: You do not have permission to delete this track.",
+        error: null,
+      });
+    }
+
+    // Fetch the track by ID
+    const track = await Track.findOne({
+      where: { id },
+    });
+
+    // If track not found, return 404
+    if (!track) {
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        status: STATUS_CODES.NOT_FOUND,
+        data: null,
+        message: "Track not found.",
+        error: null,
+      });
+    }
+
+    // Delete the track
+    await track.destroy();
+
+    return res.status(STATUS_CODES.OK).json({
+      status: STATUS_CODES.OK,
+      data: null,
+      message: `Track: ${track.title} deleted successfully.`,
+      error: null,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+      data: null,
+      message: "Internal server error.",
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   getAllTracks,
   getTrackById,
-  addTrack
+  addTrack,
+  deleteTrack
 };

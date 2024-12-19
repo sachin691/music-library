@@ -29,17 +29,8 @@ const getAllAlbums = async (req, res) => {
           attributes: ["name"], // Fetch only the artist name
         },
       ],
-      attributes: [
-        "id",
-        "title",
-        "year",
-        "hidden",
-        "genre",
-        "cover_image",
-        "tags",
-        "created_at",
-        "updated_at",
-      ], // Fetch only necessary fields for albums
+      attributes: ["id", "title", "year", "hidden", "genre", "cover_image", "tags", "created_at", "updated_at"], // Fetch only necessary fields for albums
+      order: [["created_at", "DESC"]],
     });
 
     // Return the albums in the response
@@ -143,14 +134,14 @@ const addAlbum = async (req, res) => {
     }
 
     // Check if the logged-in user has the required role (admin or editor)
-    if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
-      return res.status(STATUS_CODES.FORBIDDEN).json({
-        status: STATUS_CODES.FORBIDDEN,
-        data: null,
-        message: "Forbidden: You do not have permission to create an album.",
-        error: null,
-      });
-    }
+    // if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
+    //   return res.status(STATUS_CODES.FORBIDDEN).json({
+    //     status: STATUS_CODES.FORBIDDEN,
+    //     data: null,
+    //     message: "Forbidden: You do not have permission to create an album.",
+    //     error: null,
+    //   });
+    // }
 
     // Validate that the artist_id exists
     const artist = await Artist.findOne({ where: { id: artist_id } });

@@ -8,6 +8,10 @@ const authRoutes = require("./routes/authRoutes");
 const artistRoutes = require("./routes/artistRoutes");
 const albumRoutes = require("./routes/albumRoutes");
 const trackRoutes = require("./routes/trackRoutes");
+const favoriteRoutes = require("./routes/favoriteRoutes");
+const userFollowRoutes = require("./routes/userFollowRoutes");
+const playlistRoutes = require("./routes/playlistRoutes");
+
 const errorHandler = require("./middlewares/errorHandler");
 const requestLogger = require("./middlewares/requestLogger");
 require("./config/passport");
@@ -35,9 +39,16 @@ app.use(baseUrl + "/users", userRoutes);
 app.use(baseUrl + "/artists", artistRoutes);
 app.use(baseUrl + "/albums", albumRoutes);
 app.use(baseUrl + "/tracks", trackRoutes);
+app.use(baseUrl + "/favorite", favoriteRoutes);
+app.use(baseUrl + "/followers", userFollowRoutes);
+app.use(baseUrl + "/playlist", playlistRoutes);
+
+
+
+
 
 // Centralized error handler (for any unhandled routes or errors)
-// app.use(errorHandler);
+app.use(errorHandler);
 
 // Test the database connection at the start
 

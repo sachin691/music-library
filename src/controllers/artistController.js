@@ -18,6 +18,7 @@ const getAllArtists = async (req, res) => {
       limit: parseInt(limit, 10), // Convert to integer
       offset: parseInt(offset, 10), // Convert to integer
       attributes: ["id", "name", "grammy", "hidden"], // Fetch only necessary fields
+      order: [["created_at", "DESC"]],
     });
 
     // Respond with the list of artists
