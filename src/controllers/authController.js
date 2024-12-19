@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Organization = require("../models/Organization");
-const { STATUS_CODES } = require("../utils/constants");
+const { STATUS_CODES, ROLES } = require("../utils/constants");
 const initializeDefaultOrganization = require("../utils/initOrganization");
 const jwt = require("jsonwebtoken");
 
@@ -30,11 +30,10 @@ const signup = async (req, res) => {
     }
 
     let organizationId;
-    let role = "viewer"; // Default role
+    let role = ROLES.VIEWER; // Default role
 
-    // If organization_id is provided, check if it's the first user in that organization
     if (organization_id) {
-      // Check if the organization exists
+      // Organization ID provided in request body
       const organizationExists = await Organization.findByPk(organization_id);
       if (!organizationExists) {
         return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -45,18 +44,26 @@ const signup = async (req, res) => {
         });
       }
 
-      // Check if this is the first user in the provided organization
+      // Check if there are users in the given organization
       const organizationUserCount = await User.count({ where: { organization_id } });
-      if (organizationUserCount === 0) {
-        role = "admin"; // First user in the organization should be an admin
-      }
+      role = organizationUserCount === 0 ? ROLES.ADMIN : ROLES.VIEWER;
 
       organizationId = organization_id;
     } else {
-      // If no organization_id provided, create a default organization
-      const defaultOrg = await initializeDefaultOrganization();
-      organizationId = defaultOrg.id;
-      role = "admin"; // First user (no org provided) will be an admin
+      // No organization ID provided
+      const organizationCount = await Organization.count();
+
+      if (organizationCount === 0) {
+        // If no organizations exist, initialize the default organization
+        const defaultOrg = await initializeDefaultOrganization();
+        organizationId = defaultOrg.id;
+        role = ROLES.ADMIN; // First user becomes admin
+      } else {
+        // Get the first organization from the table and add the user to it
+        const firstOrganization = await Organization.findOne({ order: [["createdAt", "ASC"]] });
+        organizationId = firstOrganization.id;
+        role = ROLES.VIEWER; // Default role for users in an existing organization
+      }
     }
 
     // Hash the password using User model's static method
@@ -112,7 +119,7 @@ const login = async (req, res) => {
     }
 
     const isMatch = await User.comparePassword(password, user.password);
-    console.log(isMatch)
+    console.log(isMatch);
     if (!isMatch) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,

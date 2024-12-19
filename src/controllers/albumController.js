@@ -8,7 +8,7 @@ const { ROLES } = require("../utils/constants");
 const getAllAlbums = async (req, res) => {
   try {
     // Extract query parameters with default values
-    const { limit = 5, offset = 0, artist_id, hidden } = req.query;
+    const { limit = 20, offset = 0, artist_id, hidden } = req.query;
     const organizationId = req.user.organization_id;
 
     // Initialize the 'where' clause with the organization ID
@@ -27,7 +27,7 @@ const getAllAlbums = async (req, res) => {
         {
           model: Artist, // Include the Artist model
           as: "artist", // Alias for the relationship
-          attributes: ["name"], // Fetch only the artist name
+          attributes: ["name", "id" ], // Fetch only the artist name
         },
       ],
       attributes: ["id", "title", "year", "hidden", "genre", "cover_image", "tags", "created_at", "updated_at"], // Fetch only necessary fields for albums
@@ -40,6 +40,7 @@ const getAllAlbums = async (req, res) => {
       data: albums.map((album) => ({
         album_id: album.id,
         artist_name: album.artist.name, // Include the artist name in the response
+        artist_id: album.artist.id,
         name: album.title,
         year: album.year,
         hidden: album.hidden,
@@ -77,7 +78,6 @@ const getAlbumById = async (req, res) => {
         "title",
         "year",
         "hidden",
-        "release_date",
         "genre",
         "cover_image",
         "tags",
@@ -102,6 +102,7 @@ const getAlbumById = async (req, res) => {
       data: {
         album_id: album.id,
         artist_name: album.artist.name, // Include artist name in the response
+        artist_id: album.artist_id,
         name: album.title,
         year: album.year,
         hidden: album.hidden,
@@ -134,15 +135,6 @@ const addAlbum = async (req, res) => {
       });
     }
 
-    // Check if the logged-in user has the required role (admin or editor)
-    // if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
-    //   return res.status(STATUS_CODES.FORBIDDEN).json({
-    //     status: STATUS_CODES.FORBIDDEN,
-    //     data: null,
-    //     message: "Forbidden: You do not have permission to create an album.",
-    //     error: null,
-    //   });
-    // }
 
     // Validate that the artist_id exists
     const artist = await Artist.findOne({ where: { id: artist_id } });

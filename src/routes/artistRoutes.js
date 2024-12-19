@@ -8,7 +8,7 @@ const isAdmin = require("../middlewares/isAdmin");
 // Define the route for retrieving all artists
 router.get("/", authenticate, getAllArtists);
 router.get("/:id", authenticate, getArtistById);
-router.post("/add-artist", isAdmin, addArtist);
+router.post("/add-artist", authenticate, isAdmin, addArtist);
 router.put("/:id", authenticate, updateArtist);
 router.delete("/:id", authenticate, deleteArtist);
 module.exports = router;

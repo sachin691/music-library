@@ -18,7 +18,7 @@ const getUsers = async (req, res) => {
     }
 
     // Get query parameters
-    const { limit = 5, offset = 0, role } = req.query;
+    const { limit = 20, offset = 0, role } = req.query;
 
     // Ensure limit and offset are integers
     const limitInt = parseInt(limit, 10);
@@ -149,7 +149,7 @@ const addUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Extract the user ID from the URL parameters
+    const userId = req.params.id; 
 
     const user = await User.findOne({ where: { id: userId } });
 

@@ -26,10 +26,6 @@ Favorite.init(
       type: DataTypes.ENUM("Artist", "Album", "Track"),
       allowNull: false,
     },
-    favorite_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
     priority: {
       type: DataTypes.INTEGER,
       defaultValue: 0,

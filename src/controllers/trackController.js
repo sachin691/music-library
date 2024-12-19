@@ -6,7 +6,7 @@ const { ROLES, STATUS_CODES } = require("../utils/constants");
 
 const getAllTracks = async (req, res) => {
   try {
-    const { limit = 5, offset = 0, artist_id, album_id, hidden } = req.query; // Extract query params
+    const { limit = 20, offset = 0, artist_id, album_id, hidden } = req.query; // Extract query params
 
     // Convert limit and offset to integers
     const limitValue = parseInt(limit, 10);
@@ -157,16 +157,6 @@ const addTrack = async (req, res) => {
       });
     }
 
-    // Check if the logged-in user is admin or editor
-    // if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
-    //   return res.status(STATUS_CODES.FORBIDDEN).json({
-    //     status: STATUS_CODES.FORBIDDEN,
-    //     data: null,
-    //     message: "Forbidden: You do not have permission to add a new track.",
-    //     error: null,
-    //   });
-    // }
-
     // Ensure the artist exists
     const artist = await Artist.findOne({ where: { id: artist_id } });
     if (!artist) {
@@ -189,8 +179,25 @@ const addTrack = async (req, res) => {
       });
     }
 
+    // Check if a track with the same name already exists for the same artist and album
+    const existingTrack = await Track.findOne({
+      where: {
+        artist_id,
+        album_id,
+        title: name, // Assuming the track name is stored as "title"
+      },
+    });
+
+    if (existingTrack) {
+      return res.status(STATUS_CODES.CONFLICT).json({
+        status: STATUS_CODES.CONFLICT,
+        data: null,
+        message: "Track with the same name already exists in this album for the artist.",
+        error: null,
+      });
+    }
+
     // Create the new track
-    console.log("user.organization_id ==> ", user.organization_id);
     const newTrack = await Track.create({
       artist_id,
       album_id,
@@ -198,7 +205,7 @@ const addTrack = async (req, res) => {
       duration,
       hidden: hidden || false, // Default to false if not provided
       audio_url,
-      organization_id: user.organization_id
+      organization_id: user.organization_id,
     });
 
     return res.status(STATUS_CODES.CREATED).json({
@@ -217,6 +224,7 @@ const addTrack = async (req, res) => {
     });
   }
 };
+
 
 
 const deleteTrack = async (req, res) => {

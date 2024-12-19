@@ -149,6 +149,8 @@ const getTracksInPlaylist = async (req, res) => {
     // Use the static method to retrieve tracks from the playlist
     const tracks = await Playlist.getTracksInPlaylist(playlist_id);
 
+    console.log('tracks ===> ', tracks);
+
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: { tracks },

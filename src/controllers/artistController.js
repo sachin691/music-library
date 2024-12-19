@@ -5,7 +5,7 @@ const { STATUS_CODES, ROLES } = require("../utils/constants");
 const getAllArtists = async (req, res) => {
   try {
     // Extract query parameters with default values
-    const { limit = 5, offset = 0, grammy, hidden } = req.query;
+    const { limit = 20, offset = 0, grammy, hidden } = req.query;
     const organizationId = req.user.organization_id;
     // Build the filter options
     const whereClause = { organization_id: organizationId };
@@ -81,20 +81,9 @@ const getArtistById = async (req, res) => {
 
 const addArtist = async (req, res) => {
   try {
-    const { name, grammy, hidden } = req.body; // Extract artist details from the request body
+    const { name, grammy, hidden, bio } = req.body; // Extract artist details from the request body
     const { user } = req; // Get the logged-in user from the middleware (authenticate)
 
-    // // Check if the logged-in user is admin or viewer
-    // if (!["admin", "viewer"].includes(user.role)) {
-    //   return res.status(STATUS_CODES.FORBIDDEN).json({
-    //     status: STATUS_CODES.FORBIDDEN,
-    //     data: null,
-    //     message: "Forbidden: You do not have permission to create an artist.",
-    //     error: null,
-    //   });
-    // }
-
-    // Check if the organization_id exists in the logged-in user's profile
     if (!user.organization_id) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,
@@ -109,6 +98,7 @@ const addArtist = async (req, res) => {
       name,
       grammy,
       hidden,
+      bio,
       organization_id: user.organization_id, // Assign the user's organization ID
     });
 

@@ -88,23 +88,29 @@ class Playlist extends Model {
   }
 
   static async getTracksInPlaylist(playlist_id) {
-    // Assuming PlaylistTrack is a join table between Playlists and Tracks
-    return await PlaylistTrack.findAll({
-      where: { playlist_id },
-      include:
-      [
-        {
-          model: Track, // Assuming Track is another model in your database
-          as: "tracks", // Make sure to define associations between Playlist and Track
-          attributes: ["id", "title", "artist_id", "duration"], // Select track details
-        },
-      ],
-      order: [["order", "ASC"]], // Optionally order tracks based on the 'order' field
-    });
+    try {
+      // Fetch PlaylistTrack data with associated tracks
+      const playlistTracks = await PlaylistTrack.findAll({
+        where: { playlist_id },
+        include: [
+          {
+            model: Track,
+            as: "tracks",
+            attributes: ["id", "title", "artist_id", "duration"],
+          },
+        ],
+        order: [["order", "ASC"]], // Order tracks by 'order' field
+      });
+
+      // Transform the result to return only the tracks array
+      const tracks = playlistTracks.map((playlistTrack) => playlistTrack.tracks);
+
+      return tracks; // Return an array of tracks
+    } catch (error) {
+      console.error("Error fetching tracks in playlist:", error);
+      throw new Error("Unable to fetch tracks in playlist.");
+    }
   }
-
-  // Static method to define associations
-
 }
 
 Playlist.init(
