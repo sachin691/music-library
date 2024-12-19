@@ -1,5 +1,5 @@
 // src/controllers/artistController.js
-const { Artist } = require("../models");
+const  Artist  = require("../models/Artist");
 const { STATUS_CODES, ROLES } = require("../utils/constants");
 
 const getAllArtists = async (req, res) => {

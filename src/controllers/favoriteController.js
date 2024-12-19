@@ -1,4 +1,8 @@
-const { Favorite, Artist, Album, Track } = require("../models"); // Import models
+const Favorite = require("../models/Favorite");
+const Artist = require("../models/Artist");
+const Album = require("../models/Album");
+const Track = require("../models/Track");
+
 const { STATUS_CODES, CATEGORIES } = require("../utils/constants");
 
 const getFavorites = async (req, res) => {

@@ -1,4 +1,4 @@
-const { User } = require("../models"); // Assuming you're using Sequelize or similar ORM
+const  User  = require("../models/User"); // Assuming you're using Sequelize or similar ORM
 const { STATUS_CODES } = require("../utils/constants");
 const { Op } = require("sequelize");
 const { ROLES } = require("../utils/constants");

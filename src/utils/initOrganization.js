@@ -1,4 +1,4 @@
-const { Organization } = require("../models");
+const Organization = require("../models/Organization");
 
 const initializeDefaultOrganization = async () => {
   // Check if an organization already exists

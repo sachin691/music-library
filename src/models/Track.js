@@ -1,8 +1,37 @@
+// src/models/Track.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
-const Playlist = require("./Playlist");
 
-class Track extends Model {}
+class Track extends Model {
+  static associate(models) {
+    // Track belongs to Artist (one-to-many)
+    console.log("Associating Track with PlaylistTrack and others...");
+
+    Track.belongsTo(models.Artist, {
+      foreignKey: "artist_id",
+      as: "artist",
+    });
+
+    // Track belongs to Album (many-to-one)
+    Track.belongsTo(models.Album, {
+      foreignKey: "album_id",
+      as: "album",
+    });
+
+    // Track belongs to Organization (many-to-one)
+    Track.belongsTo(models.Organization, {
+      foreignKey: "organization_id",
+      as: "organization",
+    });
+
+    // Track belongs to many Playlists (many-to-many via playlist_tracks)
+    Track.belongsToMany(models.Playlist, {
+      through: "playlist_tracks",
+      foreignKey: "track_id",
+      as: "playlists",
+    });
+  }
+}
 
 Track.init(
   {
@@ -41,7 +70,7 @@ Track.init(
         model: "organizations", // Assuming you have an 'organizations' table
         key: "id",
       },
-      allowNull: false, // or false depending on your requirement
+      allowNull: false,
     },
     play_count: {
       type: DataTypes.INTEGER,
@@ -85,8 +114,5 @@ Track.init(
     underscored: true,
   }
 );
-
-// Define relationships
-Track.belongsToMany(Playlist, { through: "playlist_tracks", foreignKey: "track_id", as: "playlists" });
 
 module.exports = Track;

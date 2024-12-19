@@ -1,5 +1,6 @@
 const { up } = require("../migrations/20241218150906-add-on-delete-cascade-to-organization-artist");
-const { Album, Artist } = require("../models"); // Import the models
+const Album = require("../models/Album");
+const Artist = require("../models/Artist");
 const { STATUS_CODES } = require("../utils/constants"); // Import the status codes
 const { ROLES } = require("../utils/constants");
 

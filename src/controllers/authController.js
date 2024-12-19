@@ -1,4 +1,5 @@
-const { User, Organization } = require("../models");
+const User = require("../models/User");
+const Organization = require("../models/Organization");
 const { STATUS_CODES } = require("../utils/constants");
 const initializeDefaultOrganization = require("../utils/initOrganization");
 const jwt = require("jsonwebtoken");

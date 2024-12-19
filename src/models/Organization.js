@@ -1,9 +1,25 @@
+// src/models/Organization.js
 const { Model, DataTypes } = require("sequelize");
-const sequelize = require("../config/index");
-const User  = require("./User"); // Import User model
-const Artist = require("./Artist");
+const sequelize = require("../config/index"); // Sequelize instance
 
-class Organization extends Model {}
+class Organization extends Model {
+  // Static method to define associations
+  static associate(models) {
+    // Association with User: One organization can have many users
+    Organization.hasMany(models.User, {
+      foreignKey: "organization_id",
+      as: "users", // Alias for the relationship
+      onDelete: "CASCADE",
+    });
+
+    // Association with Artist: One organization can have many artists
+    Organization.hasMany(models.Artist, {
+      foreignKey: "organization_id",
+      as: "artists", // Alias for the relationship
+      onDelete: "CASCADE",
+    });
+  }
+}
 
 Organization.init(
   {
@@ -24,19 +40,5 @@ Organization.init(
     timestamps: true,
   }
 );
-
-// Define the association from Organization to User
-Organization.hasMany(User, {
-  foreignKey: "organization_id", // Linking the organization_id field in User model
-  as: "users", // Alias for the relationship
-  onDelete: "CASCADE",
-});
-
-
-Organization.hasMany(Artist, {
-  foreignKey: "organization_id", // Reference in the artist model
-  as: "artists", // Alias for the relationship
-  onDelete: "CASCADE"
-});
 
 module.exports = Organization;

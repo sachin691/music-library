@@ -1,5 +1,6 @@
 // src/app.js
 const express = require("express");
+const sequelize = require("./config/index");
 const cors = require("cors");
 const passport = require("passport");
 const db = require("./config"); // Import database config for connection check
@@ -29,6 +30,8 @@ app.use(requestLogger);
 db.authenticate()
   .then(() => console.log("Database connection has been established successfully."))
   .catch((err) => console.error("Unable to connect to the database:", err));
+
+require("./models");
 
 // Set up routes
 const baseUrl = process.env.BASE_URL;

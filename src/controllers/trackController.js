@@ -1,4 +1,7 @@
-const { Track, Artist, Album } = require("../models"); // Import models
+const Track = require("../models/Track");
+const Artist = require("../models/Artist");
+const Album = require("../models/Album");
+
 const { ROLES, STATUS_CODES } = require("../utils/constants");
 
 const getAllTracks = async (req, res) => {

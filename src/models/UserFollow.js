@@ -5,7 +5,22 @@ const sequelize = require("../config/index");
 const User = require("./User");
 const Artist = require("./Artist");
 
-class UserFollow extends Model {}
+class UserFollow extends Model {
+  // Associations will be defined here
+  static associate(models) {
+    // UserFollow belongs to User
+    UserFollow.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "user",
+    });
+
+    // UserFollow belongs to Artist
+    UserFollow.belongsTo(models.Artist, {
+      foreignKey: "artist_id",
+      as: "artist",
+    });
+  }
+}
 
 UserFollow.init(
   {
@@ -48,15 +63,5 @@ UserFollow.init(
   }
 );
 
-// Define associations
-UserFollow.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "user",
-});
-
-UserFollow.belongsTo(Artist, {
-  foreignKey: "artist_id",
-  as: "artist",
-});
-
+// Export the UserFollow model
 module.exports = UserFollow;

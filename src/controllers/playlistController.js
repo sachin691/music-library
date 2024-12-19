@@ -60,6 +60,8 @@ const addTrackToPlaylist = async (req, res) => {
       });
     }
 
+    console.log('going....')
+
     // Use the static method from the Playlist model to add track to the playlist
     const response = await Playlist.addTrackToPlaylist(playlist_id, track_id, user_id);
 
@@ -114,14 +116,40 @@ const removeTrackFromPlaylist = async (req, res) => {
   }
 };
 
+
 // Get all tracks in a playlist
 const getTracksInPlaylist = async (req, res) => {
   try {
     const { playlist_id } = req.params;
-    console.log(playlist_id)
-    // Use static method to get tracks in the playlist
+    const user_id = req.user.id; // Assuming `user.id` comes from the authenticate middleware
+
+    // Get the playlist details (to check its visibility and ownership)
+    const playlist = await Playlist.findOne({
+      where: { id: playlist_id },
+    });
+
+    if (!playlist) {
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        status: STATUS_CODES.NOT_FOUND,
+        data: null,
+        message: "Playlist not found.",
+        error: null,
+      });
+    }
+
+    // If the playlist is private, check if the user is the owner
+    if (!playlist.is_public && playlist.user_id !== user_id) {
+      return res.status(STATUS_CODES.FORBIDDEN).json({
+        status: STATUS_CODES.FORBIDDEN,
+        data: null,
+        message: "You do not have permission to view this playlist.",
+        error: null,
+      });
+    }
+
+    // Use the static method to retrieve tracks from the playlist
     const tracks = await Playlist.getTracksInPlaylist(playlist_id);
-    console.log(tracks);
+
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: tracks,

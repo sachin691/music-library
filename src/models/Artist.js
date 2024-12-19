@@ -1,8 +1,8 @@
 // src/models/Artist.js
 const { Model, DataTypes } = require("sequelize");
-const sequelize = require("../config/index");
 
 class Artist extends Model {
+  // Increment followers count
   static async incrementFollowers(artist_id) {
     try {
       const artist = await Artist.findByPk(artist_id); // Find artist by ID
@@ -17,6 +17,7 @@ class Artist extends Model {
     }
   }
 
+  // Decrement followers count
   static async decrementFollowers(artist_id) {
     try {
       const artist = await Artist.findByPk(artist_id); // Find artist by ID
@@ -32,66 +33,33 @@ class Artist extends Model {
       throw error; // Re-throw the error for handling in the controller
     }
   }
-}
 
-Artist.init(
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    bio: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    followers_count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-    },
-    organization_id: {
-      type: DataTypes.UUID,
-      allowNull: true, // Organization is optional
-    },
-    profile_picture: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    tags: {
-      type: DataTypes.JSONB,
-      allowNull: true,
-    },
-    hidden: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false,
-    },
-    grammy: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-  },
-  {
-    sequelize,
-    modelName: "Artist",
-    tableName: "artists",
-    timestamps: true,
-    underscored: true,
+  // Define associations in the static method
+  static associate(models) {
+    Artist.belongsTo(models.Organization, {
+      foreignKey: "organization_id",
+      as: "organization", // Alias for the relationship
+      onDelete: "CASCADE",
+    });
+
+    Artist.hasMany(models.Album, {
+      foreignKey: "artist_id",
+      as: "albums", // Alias for the relationship
+      onDelete: "CASCADE",
+    });
+
+    Artist.hasMany(models.Track, {
+      foreignKey: "artist_id",
+      as: "tracks", // Alias for the relationship
+      onDelete: "CASCADE",
+    });
+
+    Artist.belongsToMany(models.User, {
+      through: models.UserFollow,
+      foreignKey: "artist_id",
+      as: "followers", // Alias for the relationship (many-to-many through UserFollow)
+    });
   }
-);
+}
 
 module.exports = Artist;

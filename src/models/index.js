@@ -1,134 +1,41 @@
-// // src/models/index.js
-
-// const sequelize = require("../config/index");
-// const Organization = require("./Organization");
-// const User = require("./User");
-// const Artist = require("./Artist");
-// const Album = require("./Album");
-// const Track = require("./Track");
-// const Favorite = require("./Favorite");
-// const Playlist = require("./Playlist");
-// const UserFollow = require("./UserFollow");
-// const RecentlyPlayed = require("./RecentlyPlayed");
-// const PlaylistTrack = require("./PlaylistTrack");
-
-// const syncModels = async () => {
-//   try {
-//     await sequelize.sync({ force: false });
-//     console.log("Database synchronized!");
-//   } catch (err) {
-//     console.error("Error synchronizing the database:", err);
-//   }
-// };
-
-// // Run the sync
-// syncModels();
-
-// module.exports = {
-//   User,
-//   Organization,
-//   Artist,
-//   Album,
-//   Track,
-//   Favorite,
-//   Playlist,
-//   UserFollow,
-//   RecentlyPlayed,
-//   PlaylistTrack,
-// };
-
-
 // src/models/index.js
+// const { Sequelize } = require("sequelize");
+const sequelize = require("../config/index"); // Ensure this exports a Sequelize instance
 
-// src/models/index.js
-
-const sequelize = require("../config/index"); // Sequelize instance
-const Organization = require("./Organization");
+// Import models
 const User = require("./User");
+const Organization = require("./Organization");
 const Artist = require("./Artist");
-const Album = require("./Album");
-const Track = require("./Track");
 const Favorite = require("./Favorite");
 const Playlist = require("./Playlist");
 const UserFollow = require("./UserFollow");
-const RecentlyPlayed = require("./RecentlyPlayed");
-const PlaylistTrack = require("./PlaylistTrack");
+const Track = require("./Track");
+const PlaylistTrack = require("./PlaylistTrack"); // Import PlaylistTrack model
 
-// Initialize all models with sequelize instance
+// Initialize models
+User.init({}, {sequelize});
 Organization.init(sequelize);
-User.init(sequelize);
 Artist.init(sequelize);
-Album.init(sequelize);
-Track.init(sequelize);
 Favorite.init(sequelize);
 Playlist.init(sequelize);
 UserFollow.init(sequelize);
-RecentlyPlayed.init(sequelize);
-PlaylistTrack.init(sequelize);
+Track.init(sequelize);
+PlaylistTrack.init(sequelize); // Initialize PlaylistTrack model
 
-// Set up associations after all models are initialized
-// Album associations
-Album.belongsTo(Artist, {
-  foreignKey: "artist_id",
-  as: "artist",
-  onDelete: "CASCADE", // Ensuring the album is deleted when artist is deleted
-});
-Album.belongsTo(Organization, {
-  foreignKey: "organization_id",
-  as: "organization",
-  onDelete: "CASCADE", // Ensuring the album is deleted when organization is deleted
-});
+// Set up associations after initializing models
+User.associate({ Organization, Playlist, Favorite, Artist, UserFollow });
+Organization.associate({ User, Artist });
+Artist.associate({ User, UserFollow });
+Favorite.associate({ User });
+Playlist.associate({ User });
+UserFollow.associate({ User, Artist });
+Track.associate({ Artist, Album, Organization, Playlist });
+PlaylistTrack.associate({ Track, Playlist }); // Add this line to associate PlaylistTrack
 
-// Favorite associations
-Favorite.belongsTo(Artist, {
-  foreignKey: "item_id",
-  constraints: false, // Disable constraints for polymorphic relationship
-  as: "artist",
-});
-Favorite.belongsTo(Album, {
-  foreignKey: "item_id",
-  constraints: false, // Disable constraints for polymorphic relationship
-  as: "album",
-});
-Favorite.belongsTo(Track, {
-  foreignKey: "item_id",
-  constraints: false, // Disable constraints for polymorphic relationship
-  as: "track",
-});
-
-// Organization associations
-Organization.hasMany(User, {
-  foreignKey: "organization_id", // Linking the organization_id field in User model
-  as: "users", // Alias for the relationship
-  onDelete: "CASCADE",
-});
-Organization.hasMany(Artist, {
-  foreignKey: "organization_id", // Reference in the artist model
-  as: "artists", // Alias for the relationship
-  onDelete: "CASCADE"
-});
-
-// Playlist associations
-Playlist.belongsTo(User, { foreignKey: "user_id", as: "user" });
-Playlist.belongsToMany(Track, { through: "playlist_tracks", foreignKey: "playlist_id", as: "tracks" });
-
-// Track associations
-Track.belongsToMany(Playlist, { through: "playlist_tracks", foreignKey: "track_id", as: "playlists" });
-
-// UserFollow associations
-UserFollow.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "user",
-});
-UserFollow.belongsTo(Artist, {
-  foreignKey: "artist_id",
-  as: "artist",
-});
-
-// Sync models (synchronize the database)
+// Sync models with database
 const syncModels = async () => {
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: false }); // { force: false } to prevent dropping tables
     console.log("Database synchronized!");
   } catch (err) {
     console.error("Error synchronizing the database:", err);
@@ -138,16 +45,14 @@ const syncModels = async () => {
 // Run the sync
 syncModels();
 
-// Export the models
+// Export models
 module.exports = {
   User,
   Organization,
   Artist,
-  Album,
-  Track,
   Favorite,
   Playlist,
   UserFollow,
-  RecentlyPlayed,
-  PlaylistTrack,
+  Track,
+  PlaylistTrack, // Export PlaylistTrack model
 };

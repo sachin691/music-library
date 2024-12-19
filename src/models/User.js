@@ -4,6 +4,10 @@ const { Model, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
 const sequelize = require("../config/index");
 const { ROLES } = require("../utils/constants");
+const Organization = require("./Organization");
+const Artist = require("./Artist");
+const Favorite = require("./Favorite");
+const Playlist = require("./Playlist");
 
 // Enum for role values
 const ROLES_ENUM = [ROLES.ADMIN, ROLES.EDITOR, ROLES.VIEWER];
@@ -23,10 +27,6 @@ class User extends Model {
   }
 
   // This method will be called to compare the entered password with the hashed one
-  // static async comparePassword(plainPassword, hashedPassword) {
-  //   return bcrypt.compare(plainPassword, hashedPassword);
-  // }
-
   static async comparePassword(enteredPassword, originalPassword) {
     return new Promise((resolve, reject) => {
       bcrypt.compare(enteredPassword, originalPassword, (err, isMatch) => {
@@ -35,6 +35,35 @@ class User extends Model {
         }
         resolve(isMatch);
       });
+    });
+  }
+
+  // Associations will be defined here
+  static associate(models) {
+    // A user can have many playlists
+    User.hasMany(models.Playlist, {
+      foreignKey: "user_id",
+      as: "playlists",
+      onDelete: "CASCADE",
+    });
+
+    // A user can belong to an organization
+    User.belongsTo(models.Organization, {
+      foreignKey: "organization_id",
+      as: "organization",
+    });
+
+    // A user can have many favorites
+    User.hasMany(models.Favorite, {
+      foreignKey: "user_id",
+      as: "favorites",
+    });
+
+    // A user can follow many artists
+    User.belongsToMany(models.Artist, {
+      through: "user_artists",
+      foreignKey: "user_id",
+      as: "followed_artists",
     });
   }
 }
@@ -106,4 +135,5 @@ User.init(
   }
 );
 
+// Export the User model
 module.exports = User;

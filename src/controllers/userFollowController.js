@@ -1,4 +1,6 @@
-const { UserFollow, Artist } = require("../models");
+const UserFollow = require("../models/UserFollow");
+const Artist = require("../models/Artist");
+
 const { STATUS_CODES } = require("../utils/constants");
 
 const followArtist = async (req, res) => {
