@@ -36,6 +36,14 @@ require("./models");
 // Set up routes
 const baseUrl = process.env.BASE_URL;
 
+app.get("/api/v1", (req, res) => {
+  res.json({
+    message: "Welcome to the Music Management Library API",
+    status: "live",
+    version: "1.0.0",
+  });
+});
+
 // Combine both routes into one line
 app.use(baseUrl + "/", authRoutes);
 app.use(baseUrl + "/users", userRoutes);
