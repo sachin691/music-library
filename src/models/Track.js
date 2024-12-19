@@ -2,14 +2,7 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
 
-class Track extends Model {
-  static associate(models) {
-    // Track belongs to Artist (one-to-many)
-    console.log("Associating Track with PlaylistTrack and others...");
-
-    
-  }
-}
+class Track extends Model {}
 
 Track.init(
   {
@@ -45,7 +38,7 @@ Track.init(
     organization_id: {
       type: DataTypes.UUID,
       references: {
-        model: "organizations", // Assuming you have an 'organizations' table
+        model: "organizations",
         key: "id",
       },
       allowNull: false,

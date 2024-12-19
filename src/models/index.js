@@ -1,40 +1,4 @@
-// // src/models/index.js
-// const { Sequelize } = require("sequelize");
 const sequelize = require("../config/index"); // Ensure this exports a Sequelize instance
-// const Album = require("./Album");
-
-// // Import models
-// const User = require("./User");
-// const Organization = require("./Organization");
-// const Artist = require("./Artist");
-// const Favorite = require("./Favorite");
-// const Playlist = require("./Playlist");
-// const UserFollow = require("./UserFollow");
-// const Track = require("./Track");
-// const PlaylistTrack = require("./PlaylistTrack"); // Import PlaylistTrack model
-// const Album = require("./Album");
-
-// // Initialize models
-// // User.init({}, {sequelize});
-// // Organization.init(sequelize);
-// // Artist.init(sequelize);
-// // Favorite.init(sequelize);
-// // Playlist.init(sequelize);
-// // UserFollow.init(sequelize);
-// // Track.init(sequelize);
-// // PlaylistTrack.init(sequelize); // Initialize PlaylistTrack model
-
-// // Set up associations after initializing models
-// User.associate({ Organization, Playlist, Favorite, Artist, UserFollow });
-// Organization.associate({ User, Artist });
-// Artist.associate({ Organization, Album, Track, User, UserFollow });
-// // Favorite.associate({ Artist, User });
-// Playlist.associate({});
-// UserFollow.associate({ User, Artist });
-// Track.associate({ Artist, Album, Organization, Playlist });
-
-// // Export models
-
 const Album = require("./Album");
 const Artist = require("./Artist");
 const Favorite = require("./Favorite");

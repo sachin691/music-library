@@ -1,14 +1,13 @@
 // src/controllers/playlistController.js
-
 const Playlist = require("../models/Playlist");
 const Track = require("../models/Track");
-const { STATUS_CODES } = require("../utils/constants"); // Assuming you have this for status codes
+const { STATUS_CODES } = require("../utils/constants"); 
 
 // Create a new playlist
 const createPlaylist = async (req, res) => {
   try {
     const { title, description, is_public, tags } = req.body;
-    const user_id = req.user.id; // Assuming user_id is coming from the authentication middleware
+    const user_id = req.user.id; 
 
     if (!title || is_public === undefined) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -49,7 +48,7 @@ const createPlaylist = async (req, res) => {
 const addTrackToPlaylist = async (req, res) => {
   try {
     const { playlist_id, track_id } = req.body;
-    const user_id = req.user.id; // Assuming user_id is coming from the authentication middleware
+    const user_id = req.user.id; 
 
     if (!playlist_id || !track_id) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -62,7 +61,6 @@ const addTrackToPlaylist = async (req, res) => {
 
     console.log("going....");
 
-    // Use the static method from the Playlist model to add track to the playlist
     const response = await Playlist.addTrackToPlaylist(playlist_id, track_id, user_id);
 
     if (!response.success) {
@@ -96,7 +94,6 @@ const removeTrackFromPlaylist = async (req, res) => {
   try {
     const { playlist_id, track_id } = req.params;
 
-    // Use static method to remove track from playlist
     const response = await Playlist.removeTrackFromPlaylist(playlist_id, track_id);
 
     return res.status(STATUS_CODES.OK).json({
@@ -120,9 +117,8 @@ const removeTrackFromPlaylist = async (req, res) => {
 const getTracksInPlaylist = async (req, res) => {
   try {
     const { playlist_id } = req.params;
-    const user_id = req.user.id; // Assuming `user.id` comes from the authenticate middleware
+    const user_id = req.user.id; 
 
-    // Get the playlist details (to check its visibility and ownership)
     const playlist = await Playlist.findOne({
       where: { id: playlist_id },
     });
@@ -148,8 +144,6 @@ const getTracksInPlaylist = async (req, res) => {
 
     // Use the static method to retrieve tracks from the playlist
     const tracks = await Playlist.getTracksInPlaylist(playlist_id);
-
-    console.log('tracks ===> ', tracks);
 
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,

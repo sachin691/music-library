@@ -6,7 +6,7 @@ class Artist extends Model {
   // Increment followers count
   static async incrementFollowers(artist_id) {
     try {
-      const artist = await Artist.findByPk(artist_id); // Find artist by ID
+      const artist = await Artist.findByPk(artist_id); 
       if (!artist) {
         throw new Error("Artist not found.");
       }
@@ -14,14 +14,14 @@ class Artist extends Model {
       await artist.save(); // Save the changes
     } catch (error) {
       console.error("Error incrementing followers count:", error.message);
-      throw error; // Re-throw the error for handling in the controller
+      throw error; 
     }
   }
 
   // Decrement followers count
   static async decrementFollowers(artist_id) {
     try {
-      const artist = await Artist.findByPk(artist_id); // Find artist by ID
+      const artist = await Artist.findByPk(artist_id); 
       if (!artist) {
         throw new Error("Artist not found.");
       }
@@ -31,11 +31,10 @@ class Artist extends Model {
       }
     } catch (error) {
       console.error("Error decrementing followers count:", error.message);
-      throw error; // Re-throw the error for handling in the controller
+      throw error; 
     }
   }
 
-  // Define associations in the static method
 
 }
 

@@ -2,10 +2,7 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index"); // Sequelize instance
 
-class Organization extends Model {
-  // Static method to define associations
-
-}
+class Organization extends Model {}
 
 Organization.init(
   {

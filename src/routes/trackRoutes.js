@@ -4,10 +4,9 @@ const authenticate = require("../middlewares/isAuthenticated");
 const isAdmin = require("../middlewares/isAdmin");
 const router = express.Router();
 
-router.get("/", authenticate, getAllTracks); // GET route for retrieving all tracks
-router.get('/:track_id', authenticate, getTrackById); // GET route for retrieving a single track
-router.post('/add-track',authenticate, isAdmin, addTrack); // POST route for adding a new track
-router.delete('/:id',authenticate, deleteTrack); // DELETE route for deleting a track
-
+router.get("/", authenticate, getAllTracks);
+router.get("/:track_id", authenticate, getTrackById);
+router.post("/add-track", authenticate, isAdmin, addTrack);
+router.delete("/:id", authenticate, deleteTrack);
 
 module.exports = router;

@@ -1,5 +1,3 @@
-// src/routes/playlistRoutes.js
-
 const express = require("express");
 const {
   createPlaylist,
@@ -7,7 +5,7 @@ const {
   removeTrackFromPlaylist,
   getTracksInPlaylist,
 } = require("../controllers/playlistController");
-const authenticate = require("../middlewares/isAuthenticated"); // Authentication middleware
+const authenticate = require("../middlewares/isAuthenticated");
 
 const router = express.Router();
 

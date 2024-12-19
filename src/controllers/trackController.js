@@ -87,7 +87,7 @@ const getAllTracks = async (req, res) => {
 
 const getTrackById = async (req, res) => {
   try {
-    const { track_id } = req.params; // Extract track ID from the route parameter
+    const { track_id } = req.params; 
 
     // Fetch the track by its ID
     const track = await Track.findOne({
@@ -96,17 +96,16 @@ const getTrackById = async (req, res) => {
         {
           model: Artist,
           as: "artist",
-          attributes: ["name"], // Only include the artist name
+          attributes: ["name"], 
         },
         {
           model: Album,
           as: "album",
-          attributes: ["title"], // Only include the album title
+          attributes: ["title"], 
         },
       ],
     });
 
-    // If the track is not found, return 404
     if (!track) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -133,7 +132,6 @@ const getTrackById = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error(error);
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: STATUS_CODES.INTERNAL_SERVER_ERROR,
       data: null,
@@ -145,8 +143,8 @@ const getTrackById = async (req, res) => {
 
 const addTrack = async (req, res) => {
   try {
-    const { artist_id, album_id, name, duration, hidden, audio_url } = req.body; // Extract fields from request body
-    const { user } = req; // Get logged-in user from the middleware (authenticate)
+    const { artist_id, album_id, name, duration, hidden, audio_url } = req.body; 
+    const { user } = req; 
 
     if (!artist_id || !album_id || !name || !duration || !audio_url) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -184,7 +182,7 @@ const addTrack = async (req, res) => {
       where: {
         artist_id,
         album_id,
-        title: name, // Assuming the track name is stored as "title"
+        title: name, 
       },
     });
 
@@ -229,8 +227,8 @@ const addTrack = async (req, res) => {
 
 const deleteTrack = async (req, res) => {
   try {
-    const { id } = req.params; // Extract track ID from the route parameter
-    const { user } = req; // Get logged-in user from the middleware (authenticate)
+    const { id } = req.params; 
+    const { user } = req; 
 
     // Check if the logged-in user is admin or editor
     if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
@@ -267,7 +265,6 @@ const deleteTrack = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error(error);
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: STATUS_CODES.INTERNAL_SERVER_ERROR,
       data: null,

@@ -7,7 +7,6 @@ const { ROLES } = require("../utils/constants");
 // Function to retrieve all users
 const getUsers = async (req, res) => {
   try {
-    // Ensure the user is authenticated
     if (!req.user) {
       return res.status(STATUS_CODES.UNAUTHORIZED).json({
         status: STATUS_CODES.UNAUTHORIZED,
@@ -17,23 +16,19 @@ const getUsers = async (req, res) => {
       });
     }
 
-    // Get query parameters
     const { limit = 20, offset = 0, role } = req.query;
 
-    // Ensure limit and offset are integers
     const limitInt = parseInt(limit, 10);
     const offsetInt = parseInt(offset, 10);
 
-    // Get the organization ID of the logged-in user (req.user contains logged-in user info)
     const { organization_id, id } = req.user;
-    console.log(organization_id, id);
 
     // Build query options for filtering and pagination
     const queryOptions = {
       where: {
-        organization_id, // Ensure users belong to the same organization
-        id: { [Op.ne]: id }, // Exclude the logged-in user (admin)
-        ...(role && { role }), // Filter by role if provided (e.g., Editor, Viewer)
+        organization_id, 
+        id: { [Op.ne]: id }, 
+        ...(role && { role }), 
       },
       limit: limitInt,
       offset: offsetInt,
@@ -41,8 +36,6 @@ const getUsers = async (req, res) => {
 
     // Fetch users from the database, excluding the admin (logged-in user)
     const users = await User.findAll(queryOptions);
-
-    console.log("users ==> ", users);
 
     if (users.length === 0) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -71,13 +64,8 @@ const getUsers = async (req, res) => {
 
 const addUser = async (req, res) => {
   try {
-    // Ensure the user is authenticated (this is handled by the 'authenticate' middleware)
-    // Ensure the user is an Admin (this is handled by the 'isAdmin' middleware)
-
-    // Get user input from the request body
     const { email, password, role } = req.body;
 
-    // Validate input
     if (!email || !password || !role) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,
@@ -185,7 +173,7 @@ const deleteUser = async (req, res) => {
 const updatePassword = async (req, res) => {
   try {
     const { old_password, new_password } = req.body;
-    const user = req.user; // Assuming user info is attached to the request after JWT authentication
+    const user = req.user; 
 
     if (!old_password || !new_password) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -195,9 +183,6 @@ const updatePassword = async (req, res) => {
         error: null,
       });
     }
-
-    // Find user in the database
-    // const user = await User.findOne({ where: { id: userId } });
 
     if (!user) {
       return res.status(STATUS_CODES.NOT_FOUND).json({

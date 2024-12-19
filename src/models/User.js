@@ -37,8 +37,6 @@ class User extends Model {
       });
     });
   }
-
-
 }
 
 User.init(
@@ -108,5 +106,4 @@ User.init(
   }
 );
 
-// Export the User model
 module.exports = User;

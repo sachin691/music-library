@@ -2,10 +2,7 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/index");
 
-class Favorite extends Model {
-  // Static method to define associations
-
-}
+class Favorite extends Model {}
 
 Favorite.init(
   {

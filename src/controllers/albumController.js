@@ -1,45 +1,42 @@
 const { up } = require("../migrations/20241218150906-add-on-delete-cascade-to-organization-artist");
 const Album = require("../models/Album");
 const Artist = require("../models/Artist");
-const { STATUS_CODES } = require("../utils/constants"); // Import the status codes
+const { STATUS_CODES } = require("../utils/constants"); 
 const { ROLES } = require("../utils/constants");
 
 
 const getAllAlbums = async (req, res) => {
   try {
-    // Extract query parameters with default values
     const { limit = 20, offset = 0, artist_id, hidden } = req.query;
     const organizationId = req.user.organization_id;
 
-    // Initialize the 'where' clause with the organization ID
     const whereClause = { organization_id: organizationId };
 
     // Add filters based on query parameters
-    if (artist_id) whereClause.artist_id = artist_id; // Filter by artist ID
-    if (hidden !== undefined) whereClause.hidden = hidden; // Filter by visibility status
+    if (artist_id) whereClause.artist_id = artist_id; 
+    if (hidden !== undefined) whereClause.hidden = hidden; 
 
     // Fetch albums with Sequelize, including the associated artist information
     const albums = await Album.findAll({
       where: whereClause,
-      limit: parseInt(limit, 10), // Limit the number of results
-      offset: parseInt(offset, 10), // Skip a number of results based on offset
+      limit: parseInt(limit, 10), 
+      offset: parseInt(offset, 10), 
       include: [
         {
-          model: Artist, // Include the Artist model
-          as: "artist", // Alias for the relationship
-          attributes: ["name", "id" ], // Fetch only the artist name
+          model: Artist, 
+          as: "artist", 
+          attributes: ["name", "id" ], 
         },
       ],
-      attributes: ["id", "title", "year", "hidden", "genre", "cover_image", "tags", "created_at", "updated_at"], // Fetch only necessary fields for albums
+      attributes: ["id", "title", "year", "hidden", "genre", "cover_image", "tags", "created_at", "updated_at"], 
       order: [["created_at", "DESC"]],
     });
 
-    // Return the albums in the response
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: albums.map((album) => ({
         album_id: album.id,
-        artist_name: album.artist.name, // Include the artist name in the response
+        artist_name: album.artist.name, 
         artist_id: album.artist.id,
         name: album.title,
         year: album.year,
@@ -49,7 +46,6 @@ const getAllAlbums = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    // Handle errors and send the error response
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: STATUS_CODES.BAD_REQUEST,
       data: null,
@@ -61,16 +57,16 @@ const getAllAlbums = async (req, res) => {
 
 const getAlbumById = async (req, res) => {
   try {
-    const { id } = req.params; // Extract album ID from the route parameter
+    const { id } = req.params; 
 
     // Fetch the album by ID
     const album = await Album.findOne({
       where: { id },
       include: [
         {
-          model: Artist, // Include the associated Artist model
-          as: "artist", // Alias for the relationship
-          attributes: ["name"], // Fetch only the artist name
+          model: Artist, 
+          as: "artist", 
+          attributes: ["name"], 
         },
       ],
       attributes: [
@@ -83,10 +79,9 @@ const getAlbumById = async (req, res) => {
         "tags",
         "created_at",
         "updated_at",
-      ], // Select specific fields for the album
+      ],
     });
 
-    // Handle case when album is not found
     if (!album) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -96,12 +91,11 @@ const getAlbumById = async (req, res) => {
       });
     }
 
-    // Respond with the album data
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: {
         album_id: album.id,
-        artist_name: album.artist.name, // Include artist name in the response
+        artist_name: album.artist.name, 
         artist_id: album.artist_id,
         name: album.title,
         year: album.year,
@@ -111,7 +105,6 @@ const getAlbumById = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error(error);
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: STATUS_CODES.INTERNAL_SERVER_ERROR,
       data: null,
@@ -123,8 +116,8 @@ const getAlbumById = async (req, res) => {
 
 const addAlbum = async (req, res) => {
   try {
-    const { artist_id, name, year, hidden } = req.body; // Extract album details from the request body
-    const { user } = req; // Get the logged-in user from the middleware (authenticate)
+    const { artist_id, name, year, hidden } = req.body;
+    const { user } = req; 
 
     if (!artist_id) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -136,7 +129,6 @@ const addAlbum = async (req, res) => {
     }
 
 
-    // Validate that the artist_id exists
     const artist = await Artist.findOne({ where: { id: artist_id } });
     if (!artist) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
@@ -147,13 +139,12 @@ const addAlbum = async (req, res) => {
       });
     }
 
-    // Create the new album
     const newAlbum = await Album.create({
       artist_id,
       title: name, // Mapping the `name` field to `title` in the Album model
       year,
       hidden,
-      organization_id: user.organization_id, // Optional: If you need to assign the album to the user's organization
+      organization_id: user.organization_id, 
     });
 
     return res.status(STATUS_CODES.CREATED).json({
@@ -176,9 +167,9 @@ const addAlbum = async (req, res) => {
 
 const updateAlbum = async (req, res) => {
   try {
-    const { id } = req.params; // Extract album ID from the route parameter
-    const { title, artist_id, genre, cover_image, tags, year, hidden } = req.body; // Extract fields from request body
-    const { user } = req; // Get logged-in user from the middleware (authenticate)
+    const { id } = req.params; 
+    const { title, artist_id, genre, cover_image, tags, year, hidden } = req.body; 
+    const { user } = req; 
 
     
     // Check if the logged-in user is admin or editor
@@ -191,12 +182,10 @@ const updateAlbum = async (req, res) => {
       });
     }
 
-    // Fetch the album by ID
     const album = await Album.findOne({
       where: { id },
     });
 
-    // If album not found, return 404
     if (!album) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -215,7 +204,6 @@ const updateAlbum = async (req, res) => {
       });
     }
 
-    // Ensure the artist exists before updating
     if (artist_id) {
       const artist = await Artist.findOne({ where: { id: artist_id } });
       if (!artist) {
@@ -228,7 +216,6 @@ const updateAlbum = async (req, res) => {
       }
     }
 
-    // Update the album with the provided details
     const updatedAlbum = await album.update({
       title: title || album.title,
       artist_id: artist_id || album.artist_id,
@@ -236,10 +223,9 @@ const updateAlbum = async (req, res) => {
       cover_image: cover_image || album.cover_image,
       tags: tags || album.tags,
       year: year || album.year,
-      hidden: hidden !== undefined ? hidden : album.hidden, // Default to current value if not provided
+      hidden: hidden !== undefined ? hidden : album.hidden, 
     });
 
-    // Return the response after successful update
     return res.status(STATUS_CODES.NO_CONTENT).json({
       status: STATUS_CODES.NO_CONTENT,
       data: null,
@@ -247,7 +233,6 @@ const updateAlbum = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error(error);
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: STATUS_CODES.INTERNAL_SERVER_ERROR,
       data: null,
@@ -260,10 +245,9 @@ const updateAlbum = async (req, res) => {
 
 const deleteAlbum = async (req, res) => {
   try {
-    const { id } = req.params; // Extract album ID from the route parameter
-    const { user } = req; // Get logged-in user from the middleware (authenticate)
+    const { id } = req.params; 
+    const { user } = req; 
 
-    // Check if the logged-in user is admin or editor
     if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
       return res.status(STATUS_CODES.FORBIDDEN).json({
         status: STATUS_CODES.FORBIDDEN,
@@ -273,14 +257,10 @@ const deleteAlbum = async (req, res) => {
       });
     }
 
-    // Fetch the album by ID
-    console.log('here ==> ', id);
     const album = await Album.findOne({
       where: { id },
     });
-    console.log('pass..')
 
-    // If album not found, return 404
     if (!album) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -290,10 +270,8 @@ const deleteAlbum = async (req, res) => {
       });
     }
 
-    // Delete the album
     await album.destroy();
 
-    // Return the response after successful deletion
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: null,
@@ -301,7 +279,6 @@ const deleteAlbum = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error(error);
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: STATUS_CODES.INTERNAL_SERVER_ERROR,
       data: null,

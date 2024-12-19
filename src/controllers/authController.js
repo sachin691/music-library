@@ -8,7 +8,6 @@ const signup = async (req, res) => {
   try {
     const { email, password, organization_id } = req.body;
 
-    // Validate required fields
     if (!email || !password) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,
@@ -18,7 +17,6 @@ const signup = async (req, res) => {
       });
     }
 
-    // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -30,7 +28,7 @@ const signup = async (req, res) => {
     }
 
     let organizationId;
-    let role = ROLES.VIEWER; // Default role
+    let role = ROLES.VIEWER; 
 
     if (organization_id) {
       // Organization ID provided in request body
@@ -97,7 +95,6 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate required fields
     if (!email || !password) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,
@@ -162,9 +159,6 @@ const logout = async (req, res) => {
         error: "Authorization token missing",
       });
     }
-
-    // If you are using a blacklist approach, you can blacklist the token here
-    // For simplicity, we assume JWT is stateless and no actual server-side invalidation is required.
 
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,

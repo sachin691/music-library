@@ -4,8 +4,7 @@ const Artist = require("./Artist");
 const Organization = require("./Organization");
 const sequelize = require("../config/index");
 
-class Album extends Model {
-}
+class Album extends Model {}
 
 Album.init(
   {
@@ -48,7 +47,7 @@ Album.init(
     },
     year: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Optional
+      allowNull: true, 
     },
     hidden: {
       type: DataTypes.BOOLEAN,

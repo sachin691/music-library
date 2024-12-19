@@ -5,10 +5,7 @@ const sequelize = require("../config/index");
 const User = require("./User");
 const Artist = require("./Artist");
 
-class UserFollow extends Model {
-  // Associations will be defined here
-
-}
+class UserFollow extends Model {}
 
 UserFollow.init(
   {

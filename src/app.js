@@ -1,9 +1,8 @@
-// src/app.js
 const express = require("express");
 const sequelize = require("./config/index");
 const cors = require("cors");
 const passport = require("passport");
-const db = require("./config"); // Import database config for connection check
+const db = require("./config");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const artistRoutes = require("./routes/artistRoutes");
@@ -16,12 +15,11 @@ const playlistRoutes = require("./routes/playlistRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 const requestLogger = require("./middlewares/requestLogger");
 require("./config/passport");
-// Initialize the Express app
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(express.json()); // Parse incoming JSON requests
+app.use(cors());
+app.use(express.json());
 
 // Initialize Passport.js for authentication
 app.use(passport.initialize());
@@ -54,15 +52,5 @@ app.use(baseUrl + "/favorite", favoriteRoutes);
 app.use(baseUrl + "/followers", userFollowRoutes);
 app.use(baseUrl + "/playlist", playlistRoutes);
 
-
-
-
-
-// Centralized error handler (for any unhandled routes or errors)
 app.use(errorHandler);
-
-// Test the database connection at the start
-
-
-// Export the app for use in server.js
 module.exports = app;

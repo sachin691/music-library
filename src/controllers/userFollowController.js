@@ -5,8 +5,8 @@ const { STATUS_CODES } = require("../utils/constants");
 
 const followArtist = async (req, res) => {
   try {
-    const { artist_id } = req.body; // Extract artist ID from the request body
-    const { id: user_id } = req.user; // Extract user ID from the authenticated user
+    const { artist_id } = req.body; 
+    const { id: user_id } = req.user; 
 
     // Check if the user is already following the artist
     const existingFollow = await UserFollow.findOne({
@@ -45,10 +45,9 @@ const followArtist = async (req, res) => {
 
 const unFollowArtist = async (req, res) => {
   try {
-    const { artist_id } = req.params; // Extract artist ID from the route parameter
-    const { id: user_id } = req.user; // Extract user ID from the authenticated user
+    const { artist_id } = req.params; 
+    const { id: user_id } = req.user; 
 
-    // Find and delete the follow record
     const follow = await UserFollow.findOne({
       where: { user_id, artist_id },
     });
@@ -84,10 +83,9 @@ const unFollowArtist = async (req, res) => {
 
 const getFollowings = async (req, res) => {
   try {
-    const { limit = 10, offset = 0, name } = req.query; // Optional filters
-    const { id: user_id } = req.user; // Extract user ID from the authenticated user
+    const { limit = 10, offset = 0, name } = req.query; 
+    const { id: user_id } = req.user; 
 
-    // Query for follow records with optional filters
     const whereClause = name ? { user_id, "$artist.name$": { [Op.iLike]: `%${name}%` } } : { user_id };
 
     const follows = await UserFollow.findAll({

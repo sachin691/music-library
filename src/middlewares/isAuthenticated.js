@@ -1,5 +1,5 @@
 const passport = require("passport");
-const { STATUS_CODES } = require("../utils/constants"); // Assuming STATUS_CODES is defined in constants.js
+const { STATUS_CODES } = require("../utils/constants"); 
 
 const authenticate = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
@@ -23,7 +23,7 @@ const authenticate = (req, res, next) => {
 
     req.user = user;
     next();
-  })(req, res, next); // Execute the passport authentication
+  })(req, res, next); 
 };
 
 module.exports = authenticate;

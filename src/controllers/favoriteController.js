@@ -7,9 +7,9 @@ const { STATUS_CODES, CATEGORIES } = require("../utils/constants");
 
 const getFavorites = async (req, res) => {
   try {
-    const { category } = req.params; // Extract category from route parameter
-    const { limit = 5, offset = 0 } = req.query; // Extract query parameters with default values
-    const { id: userId } = req.user; // Logged-in user's ID from middleware (authenticate)
+    const { category } = req.params; 
+    const { limit = 5, offset = 0 } = req.query;
+    const { id: userId } = req.user; 
 
     // Validate category
     if (!Object.values(CATEGORIES).includes(category.toLowerCase())) {
@@ -89,7 +89,6 @@ const addFavorite = async (req, res) => {
       });
     }
 
-    // Validate category
     if (!Object.values(CATEGORIES).includes(category.toLowerCase())) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: STATUS_CODES.BAD_REQUEST,
@@ -145,9 +144,8 @@ const addFavorite = async (req, res) => {
 const removeFavorite = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id; // Assumes `authenticate` middleware adds `req.user`
+    const userId = req.user.id; 
 
-    // Find the favorite by ID and user ID
     const favorite = await Favorite.findOne({
       where: {
         id,
@@ -155,7 +153,6 @@ const removeFavorite = async (req, res) => {
       },
     });
 
-    // Check if favorite exists
     if (!favorite) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -165,7 +162,6 @@ const removeFavorite = async (req, res) => {
       });
     }
 
-    // Delete the favorite
     await favorite.destroy();
 
     return res.status(STATUS_CODES.OK).json({

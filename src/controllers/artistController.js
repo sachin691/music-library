@@ -4,24 +4,21 @@ const { STATUS_CODES, ROLES } = require("../utils/constants");
 
 const getAllArtists = async (req, res) => {
   try {
-    // Extract query parameters with default values
     const { limit = 20, offset = 0, grammy, hidden } = req.query;
     const organizationId = req.user.organization_id;
-    // Build the filter options
+
     const whereClause = { organization_id: organizationId };
     if (grammy !== undefined) whereClause.grammy = grammy; // Filter by Grammy awards
     if (hidden !== undefined) whereClause.hidden = hidden; // Filter by visibility
 
-    // Fetch artists with Sequelize
     const artists = await Artist.findAll({
       where: whereClause,
       limit: parseInt(limit, 10), // Convert to integer
       offset: parseInt(offset, 10), // Convert to integer
-      attributes: ["id", "name", "grammy", "hidden"], // Fetch only necessary fields
+      attributes: ["id", "name", "grammy", "hidden"], 
       order: [["created_at", "DESC"]],
     });
 
-    // Respond with the list of artists
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: artists,
@@ -29,7 +26,6 @@ const getAllArtists = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    // Handle errors
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: STATUS_CODES.BAD_REQUEST,
       data: null,
@@ -42,15 +38,13 @@ const getAllArtists = async (req, res) => {
 
 const getArtistById = async (req, res) => {
   try {
-    const { id } = req.params; // Extract artist ID from the route parameter
+    const { id } = req.params; 
 
-    // Fetch the artist by ID
     const artist = await Artist.findOne({
       where: { id },
-      attributes: ["id", "name", "grammy", "hidden"], // Select specific fields
+      attributes: ["id", "name", "grammy", "hidden"], 
     });
 
-    // Handle case when artist is not found
     if (!artist) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -60,7 +54,6 @@ const getArtistById = async (req, res) => {
       });
     }
 
-    // Respond with the artist data
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: artist,
@@ -81,8 +74,8 @@ const getArtistById = async (req, res) => {
 
 const addArtist = async (req, res) => {
   try {
-    const { name, grammy, hidden, bio } = req.body; // Extract artist details from the request body
-    const { user } = req; // Get the logged-in user from the middleware (authenticate)
+    const { name, grammy, hidden, bio } = req.body; 
+    const { user } = req; 
 
     if (!user.organization_id) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({
@@ -93,7 +86,6 @@ const addArtist = async (req, res) => {
       });
     }
 
-    // Create the new artist
     const newArtist = await Artist.create({
       name,
       grammy,
@@ -109,7 +101,6 @@ const addArtist = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error(error);
     return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: STATUS_CODES.INTERNAL_SERVER_ERROR,
       data: null,
@@ -122,9 +113,9 @@ const addArtist = async (req, res) => {
 
 const updateArtist = async (req, res) => {
   try {
-    const { id } = req.params; // Get artist ID from URL params
-    const { name, grammy, hidden, bio, tags, profile_picture } = req.body; // Get updatable fields from request body
-    const { user } = req; // Logged-in user from middleware
+    const { id } = req.params; 
+    const { name, grammy, hidden, bio, tags, profile_picture } = req.body; 
+    const { user } = req;
 
     // Check if user has admin or viewer role
     if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
@@ -136,10 +127,8 @@ const updateArtist = async (req, res) => {
       });
     }
 
-    // Find the artist by ID
     const artist = await Artist.findByPk(id);
 
-    // If artist not found, return 404
     if (!artist) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -149,7 +138,6 @@ const updateArtist = async (req, res) => {
       });
     }
 
-    // Update only the fields provided in the request body
     const updatedData = {};
     if (name !== undefined) updatedData.name = name;
     if (grammy !== undefined) updatedData.grammy = grammy;
@@ -158,10 +146,8 @@ const updateArtist = async (req, res) => {
     if (tags !== undefined) updatedData.tags = tags;
     if (profile_picture !== undefined) updatedData.profile_picture = profile_picture;
 
-    // Update the artist record
     await artist.update(updatedData);
 
-    // Return 204 No Content
     return res.status(STATUS_CODES.NO_CONTENT).json({
       status: STATUS_CODES.NO_CONTENT,
       data: null,
@@ -169,7 +155,6 @@ const updateArtist = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error("Error updating artist:", error);
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: STATUS_CODES.BAD_REQUEST,
       data: null,
@@ -183,10 +168,9 @@ const updateArtist = async (req, res) => {
 
 const deleteArtist = async (req, res) => {
   try {
-    const { id } = req.params; // Get artist ID from URL params
-    const { user } = req; // Logged-in user from middleware
+    const { id } = req.params; 
+    const { user } = req; 
 
-    // Check if user has admin or editor role
     if (![ROLES.ADMIN, ROLES.EDITOR].includes(user.role)) {
       return res.status(STATUS_CODES.FORBIDDEN).json({
         status: STATUS_CODES.FORBIDDEN,
@@ -196,10 +180,8 @@ const deleteArtist = async (req, res) => {
       });
     }
 
-    // Find the artist by ID
     const artist = await Artist.findByPk(id);
 
-    // If artist not found, return 404
     if (!artist) {
       return res.status(STATUS_CODES.NOT_FOUND).json({
         status: STATUS_CODES.NOT_FOUND,
@@ -209,13 +191,10 @@ const deleteArtist = async (req, res) => {
       });
     }
 
-    // Store artist name before deleting for a more descriptive response
     const artistName = artist.name;
 
-    // Delete the artist
     await artist.destroy();
 
-    // Return success response
     return res.status(STATUS_CODES.OK).json({
       status: STATUS_CODES.OK,
       data: { artist_id: id },
@@ -223,7 +202,6 @@ const deleteArtist = async (req, res) => {
       error: null,
     });
   } catch (error) {
-    console.error("Error deleting artist:", error);
     return res.status(STATUS_CODES.BAD_REQUEST).json({
       status: STATUS_CODES.BAD_REQUEST,
       data: null,
